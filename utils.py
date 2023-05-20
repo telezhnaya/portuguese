@@ -13,10 +13,23 @@ def get_attempts_cell(from_portuguese):
     return 4 if from_portuguese else 5
 
 
-def mark_as_done(sheet, row, from_portuguese):
+def mark_as_correct(sheet, row, from_portuguese):
     attempts = get_attempts(row, from_portuguese) + 1
     sheet.update_cell(row['index'], get_attempts_cell(from_portuguese), attempts)
     if attempts >= ENOUGH and get_attempts(row, not from_portuguese) >= ENOUGH:
+        print('Congrats, you\'ve learned this!')
+        sheet.format("A{0}:F{0}".format(row['index']), {
+            "backgroundColor": {
+                "red": 0.8,
+                "green": 1.0,
+                "blue": 0.8
+            }})
+
+
+def mark_as_done(sheet, row, from_portuguese):
+    attempts = max(ENOUGH, get_attempts(row, from_portuguese) + 1)
+    sheet.update_cell(row['index'], get_attempts_cell(from_portuguese), attempts)
+    if get_attempts(row, not from_portuguese) >= ENOUGH:
         print('Congrats, you\'ve learned this!')
         sheet.format("A{0}:F{0}".format(row['index']), {
             "backgroundColor": {

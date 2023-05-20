@@ -3,7 +3,7 @@ import random
 
 from getch import getch
 from google.oauth2 import service_account
-from training_set import create_words_set
+from training_set import create_words_set, print_stats
 from utils import *
 
 # Define the scope for accessing Google Sheets
@@ -30,6 +30,7 @@ client.login()
 spreadsheet = client.open(spreadsheet_name)
 # Select the first sheet in the file
 sheet = spreadsheet.get_worksheet(0)
+print_stats(sheet)
 
 for row in create_words_set(sheet):
     from_portuguese = random.choice([True, False])
@@ -37,17 +38,15 @@ for row in create_words_set(sheet):
     question, answer = get_task(row, from_portuguese)
     print("\t\t", question)
     input_char = getch()
-    if input_char == 'd':  # pressed right -> we know this word
-        mark_as_done(sheet, row, from_portuguese)
-    elif input_char == 'a':  # pressed left -> we don't know the word
-        mark_as_new(sheet, row, from_portuguese)
-    elif input_char == 's':  # pressed down -> we doubt
+    if input_char == 's':  # pressed down -> we doubt
         print(answer)
         input_char = getch()
-        if input_char == 'd':  # pressed right -> we know this word
-            mark_as_done(sheet, row, from_portuguese)
-        elif input_char == 'a':  # pressed left -> we don't know the word
-            mark_as_new(sheet, row, from_portuguese)
+    if input_char == 'w':
+        mark_as_done(sheet, row, from_portuguese)
+    elif input_char == 'd':  # pressed right -> we know this word
+        mark_as_correct(sheet, row, from_portuguese)
+    elif input_char == 'a':  # pressed left -> we don't know the word
+        mark_as_new(sheet, row, from_portuguese)
     print("Correct:", answer)
 
 sheet.sort((6, 'asc'), (1, 'asc'))
