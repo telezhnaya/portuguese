@@ -1,5 +1,4 @@
 import gspread
-import random
 
 from getch import getch
 from google.oauth2 import service_account
@@ -16,7 +15,7 @@ credentials_file = 'credentials.json'
 # Define the name of your Google Sheets file
 spreadsheet_name = 'Portuguese'
 # header:
-# palavra	tradução	tipo	tentativas correctas	vice-versa	feito
+# palavra	tradução	tipo	tentativas correctas	vice-versa	feito	necessidade
 
 # Load credentials from the JSON file
 credentials = service_account.Credentials.from_service_account_file(credentials_file, scopes=scope)
@@ -31,9 +30,11 @@ spreadsheet = client.open(spreadsheet_name)
 # Select the first sheet in the file
 sheet = spreadsheet.get_worksheet(0)
 print_stats(sheet)
+words_set = create_words_set(sheet)
+print("Current set size:", len(words_set))
 
-for row in create_words_set(sheet):
-    from_portuguese = random.choice([True, False])
+for row in words_set:
+    from_portuguese = choose_direction(row)
     print()
     question, answer = get_task(row, from_portuguese)
     print("\t\t", question)

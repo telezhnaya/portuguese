@@ -26,13 +26,14 @@ def create_words_set(sheet):
     random.shuffle(data)
     # return records
 
-    limits = {WordType.KNOWN: 3, WordType.PARTIALLY_KNOWN: 15, WordType.NEW: 5}
+    limits = {WordType.KNOWN: 3, WordType.PARTIALLY_KNOWN: 24, WordType.NEW: 3}
     types_count = Counter()
 
     words_set = []
     for row in data:
         word_type = get_word_type(row)
-        if types_count[word_type] < limits[word_type]:
+        # Help myself to finish learning important words
+        if (row['necessidade'] and word_type != WordType.KNOWN) or types_count[word_type] < limits[word_type]:
             types_count[word_type] += 1
             words_set.append(row)
     return words_set
