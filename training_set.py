@@ -1,24 +1,31 @@
 import random
 
 from collections import Counter
+from datetime import datetime, timedelta
 from enum import Enum
-from utils import get_attempts, ENOUGH
+from utils import get_attempts, ENOUGH, REPEAT_AGAIN_AFTER_DAYS
 
 
 class WordType(Enum):
-    KNOWN = 0
-    PARTIALLY_KNOWN = 1
-    NEW = 2
+    KNOWN_OLD = 0
+    KNOWN_NEW = 1
+    PARTIALLY_KNOWN_MINOR = 2
+    PARTIALLY_KNOWN_MAJOR = 3
+    NEW = 4
 
 
 def get_word_type(row):
     a = get_attempts(row, True)
     b = get_attempts(row, False)
     if a >= ENOUGH and b >= ENOUGH:
-        return WordType.KNOWN
+        d = min(datetime.strptime(row["última tentativa correcta"], "%d.%m.%Y"), datetime.strptime(row["última vice-versa"], "%d.%m.%Y"))
+        if d < datetime.now() - REPEAT_AGAIN_AFTER_DAYS:
+            return WordType.KNOWN_OLD
+        else:
+            return WordType.KNOWN_NEW
     if a == 0 and b == 0:
         return WordType.NEW
-    return WordType.PARTIALLY_KNOWN
+    return WordType.PARTIALLY_KNOWN_MAJOR if row["necessidade"] else WordType.PARTIALLY_KNOWN_MINOR
 
 
 def create_words_set(sheet):
@@ -26,16 +33,18 @@ def create_words_set(sheet):
     random.shuffle(data)
     # return records
 
-    limits = {WordType.KNOWN: 3, WordType.PARTIALLY_KNOWN: 24, WordType.NEW: 3}
+    limits = {WordType.KNOWN_OLD: 1000, WordType.PARTIALLY_KNOWN_MAJOR: 1000, WordType.PARTIALLY_KNOWN_MINOR: 10, WordType.NEW: 10}
     types_count = Counter()
 
     words_set = []
     for row in data:
         word_type = get_word_type(row)
-        # Help myself to finish learning important words
-        if (row['necessidade'] and word_type != WordType.KNOWN) or types_count[word_type] < limits[word_type]:
+        if word_type == WordType.KNOWN_NEW:
+            continue
+        if types_count[word_type] < limits[word_type]:
             types_count[word_type] += 1
             words_set.append(row)
+    print("{} old words for today".format(types_count[WordType.KNOWN_OLD]))
     return words_set
 
 

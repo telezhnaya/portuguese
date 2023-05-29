@@ -15,7 +15,7 @@ credentials_file = 'credentials.json'
 # Define the name of your Google Sheets file
 spreadsheet_name = 'Portuguese'
 # header:
-# palavra	tradução	tipo	tentativas correctas	vice-versa	feito	necessidade
+# palavra	tradução	tipo	tentativas correctas	vice-versa	feito	necessidade	última tentativa correcta	última vice-versa
 
 # Load credentials from the JSON file
 credentials = service_account.Credentials.from_service_account_file(credentials_file, scopes=scope)
