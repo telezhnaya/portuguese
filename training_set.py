@@ -33,7 +33,7 @@ def create_words_set(sheet):
     random.shuffle(data)
     # return records
 
-    limits = {WordType.KNOWN_OLD: 1000, WordType.PARTIALLY_KNOWN_MAJOR: 1000, WordType.PARTIALLY_KNOWN_MINOR: 10, WordType.NEW: 10}
+    limits = {WordType.KNOWN_OLD: 30, WordType.PARTIALLY_KNOWN_MAJOR: 70, WordType.PARTIALLY_KNOWN_MINOR: 30, WordType.NEW: 10}
     types_count = Counter()
 
     words_set = []
@@ -45,6 +45,8 @@ def create_words_set(sheet):
             types_count[word_type] += 1
             words_set.append(row)
     print("{} old words for today".format(types_count[WordType.KNOWN_OLD]))
+    print("{} partially known important words".format(types_count[WordType.PARTIALLY_KNOWN_MAJOR]))
+    print("{} partially known other words".format(types_count[WordType.PARTIALLY_KNOWN_MINOR]))
     return words_set
 
 
