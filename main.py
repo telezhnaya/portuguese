@@ -50,4 +50,4 @@ for row in words_set:
         mark_as_new(sheet, row, from_portuguese)
     print("Correct:", answer)
 
-sheet.sort((6, 'asc'), (1, 'asc'))
+sheet.sort((10, 'des'), (6, 'asc'), (1, 'asc'))

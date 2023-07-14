@@ -7,6 +7,7 @@ ENOUGH = 3
 REPEAT_AGAIN_AFTER_DAYS = timedelta(days=150)
 FROM_PT_COUNT = 'de português para inglês'
 FROM_EN_COUNT = 'de inglês para português'
+CHOOSE_TO_LEARN_CELL = 10
 
 
 def get_attempts(row, from_portuguese):
@@ -41,6 +42,7 @@ def mark_as_correct(sheet, row, from_portuguese):
     sheet.update_cell(row['index'], get_last_date_checked_cell(from_portuguese), date.today().strftime("%d.%m.%Y"))
     if attempts >= ENOUGH and get_attempts(row, not from_portuguese) >= ENOUGH:
         print('Congrats, you\'ve learned this!')
+        sheet.update_cell(row['index'], CHOOSE_TO_LEARN_CELL, None)
         sheet.format("A{0}:G{0}".format(row['index']), {
             "backgroundColor": {
                 "red": 0.8,
