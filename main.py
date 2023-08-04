@@ -33,11 +33,11 @@ print_stats(sheet)
 words_set = create_words_set(sheet)
 print("Current set size:", len(words_set))
 
-for row in words_set:
+for i, row in enumerate(words_set):
     from_portuguese = choose_direction(row)
     print()
     question, answer = get_task(row, from_portuguese)
-    print("\t\t", question)
+    print("{}/{}\t\t {}".format(i + 1, len(words_set), question))
     input_char = getch()
     if input_char == 's':  # pressed down -> we doubt
         print(answer)
